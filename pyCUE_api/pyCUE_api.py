@@ -185,12 +185,15 @@ class Controller(object):
     
     self.cue.CorsairRequestControl(priority)
   
-  def deviceGetModels(self):
-    devices = {}
-    count = self.deviceGetCount()
-    
-    for deviceid in range(count):
-      devices[deviceid] = self.deviceGetInfo(deviceid).model
+  def deviceGetModels(self, deviceid=None):
+    if deviceid == None:
+      devices = {}
+      count = self.deviceGetCount()
+      
+      for deviceid in range(count):
+        devices[deviceid] = self.deviceGetInfo(deviceid).model
+    else:
+      devices = self.deviceGetInfo(deviceid).model
     
     return devices
   
