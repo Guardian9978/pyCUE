@@ -45,16 +45,16 @@ from pyCUE_api.pyCUE_api import Controller
 handle = Controller()
 
 count = handle.deviceGetCount()
-print("Devices Found: "str(count))
+print("Devices Found: " + str(count))
 
 count = handle.ledGetCount(0)
-print("Leds found on Device 0: "str(count))
+print("Leds found on Device 0: " + str(count))
 
 array = handle.ledGetColor(0, 200)
 r = array[0].r
 g = array[0].g
 b = array[0].b
-print("LED 200 on Device 0 Color: ["+str(r)+", "+str(g)+", "+str(b)+"]")
+print("LED 200 on Device 0 Color: [" + str(r) + ", " + str(g) + ", " + str(b) + "]")
 
 handle.ledSet(0, [0, 0, 200])
 handle.flush()
