@@ -185,7 +185,7 @@ class Controller(object):
     
     self.cue.CorsairRequestControl(priority)
   
-  def deviceGetModels(self, deviceid):
+  def deviceGetModels(self):
     devices = {}
     count = self.deviceGetCount()
     
