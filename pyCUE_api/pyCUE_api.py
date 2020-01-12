@@ -2,6 +2,46 @@ from collections import namedtuple
 from ctypes import Structure, CDLL, c_double, c_int, c_bool, c_char_p, byref, POINTER
 from operator import attrgetter
 
+class _CorsairDeviceInfo(Structure):
+    """
+    Structure containing device info
+    """
+    __slots__ = [
+        "type",
+        "model",
+        "physicalLayout",
+        "logicalLayout",
+        "capsMask",
+        "ledsCount"
+    ]
+
+    _fields_ = [
+        ("type", c_int),
+        ("model", c_char_p),
+        ("physicalLayout", c_int),
+        ("logicalLayout", c_int),
+        ("capsMask", c_int),
+        ("ledsCount", c_int)
+    ]
+
+class CorsairDeviceInfo(namedtuple('CorsairDeviceInfo', _CorsairDeviceInfo.__slots__)):
+
+    def __new__(cls, dev_info):
+        """
+        Args:
+            dev_info (_CorsairDeviceInfo): Structure containing device info
+        Returns:
+            CorsairDeviceInfo: namedtuple containing device info
+        """
+        #dev_type = CDT(dev_info.type)
+        dev_type = dev_info.type
+        dev_model = dev_info.model.decode()
+        dev_pl = dev_info.physicalLayout
+        dev_ll = dev_info.logicalLayout
+        dev_cm = dev_info.capsMask
+        dev_ledscount = dev_info.ledsCount
+        return super(CorsairDeviceInfo, cls).__new__(cls, dev_type, dev_model, dev_pl, dev_ll, dev_cm, dev_ledscount)
+
 class CorsairLedColor(Structure):
     """
     Structure representing a LED color
@@ -138,9 +178,18 @@ class Controller(object):
     self.cue.CorsairGetLedPositionsByDeviceIndex.restype = POINTER(_CorsairLedPositions)
     self.cue.CorsairGetLedPositionsByDeviceIndex.argtypes = [c_int]
     
+    self.cue.CorsairGetDeviceInfo.restype = POINTER(_CorsairDeviceInfo)
+    self.cue.CorsairGetDeviceInfo.argtypes = [c_int]
+    
     self.protocol_details = self.perform_protocol_handshake()
     
     self.cue.CorsairRequestControl(priority)
+  
+  def deviceGetInfo(self, deviceid):
+    dev_info = self.cue.CorsairGetDeviceInfo(deviceid)
+    if not bool(dev_info):  # False if `dev_info` is a NULL pointer
+        return None
+    return CorsairDeviceInfo(dev_info.contents)
   
   def deviceGetCount(self):
     return self.cue.CorsairGetDeviceCount()
@@ -170,15 +219,26 @@ class Controller(object):
     
     return array
   
-  def ledGetCount(self, deviceid=None):
+  def ledGetIds(self, deviceid):
+    ledsinfo = self.ledGetInfo(deviceid)
+    deviceinfo = self.deviceGetInfo(deviceid)
+    print("Device ("+str(deviceinfo.model)+") Leds:")
+    
+    for led in ledsinfo:
+      print(led.ledId)
+    
+  
+  def ledGetInfo(self, deviceid=None):
     if not deviceid is None:
       leds = self.cue.CorsairGetLedPositionsByDeviceIndex(deviceid)
     else:
       leds = self.cue.CorsairGetLedPositions()
     
-    ledpositions = CorsairLedPositions(leds.contents)
+    return CorsairLedPositions(leds.contents).pLedPosition
+  
+  def ledGetCount(self, deviceid=None):
+    return len(self.ledGetInfo(deviceid))
     
-    return len(ledpositions.pLedPosition)
   
   def perform_protocol_handshake(self):
     """
