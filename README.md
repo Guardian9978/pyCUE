@@ -13,12 +13,18 @@ handle = Controller()
 #To get the amount of devices detected
 count = handle.deviceGetCount() #(Returns an Integer)
 
+#Get the device model Parameters(Device ID | Returns a String)
+model = handle.deviceGetModel(deviceid)
+
+#Get device led ids Parameters(DeviceID) Prints device Model and all Led Ids
+handle.ledGetIds(deviceid)
+
 #We can then get the led count
 count = handle.ledGetCount(deviceid) #(Paramaters taken Integer | Returns an Integer)
 count = handle.ledGetCount() #For Keyboards: (Returns an Integer) 
 
 #Get the current LED color using a Device ID. (Paramaters taken int DeviceID | Returns an Array)
-array = handle.ledGetColor(deviceid, 200)
+array = handle.ledGetColor(deviceid, ledid)
 red = array[0].r #red
 green = array[0].g #green
 blue = array[0].b #blue
@@ -46,6 +52,12 @@ handle = Controller()
 
 count = handle.deviceGetCount()
 print("Devices Found: " + str(count))
+
+model = handle.deviceGetModel(deviceid)
+print("Device 0 Model: " + model)
+
+#There is no return it just prints the information
+handle.ledGetIds(deviceid)
 
 count = handle.ledGetCount(0)
 print("Leds found on Device 0: " + str(count))
