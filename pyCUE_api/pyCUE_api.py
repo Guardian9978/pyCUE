@@ -108,7 +108,9 @@ class Controller(object):
     else:
       leds = self.cue.CorsairGetLedPositions()
     
-    return leds
+    ledpositions = CorsairLedPositions(leds.contents)
+    
+    return len(ledpositions.pLedPosition)
   
   def perform_protocol_handshake(self):
     """
