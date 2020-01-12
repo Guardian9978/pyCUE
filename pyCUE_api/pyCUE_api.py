@@ -185,6 +185,9 @@ class Controller(object):
     
     self.cue.CorsairRequestControl(priority)
   
+  def deviceGetModel(self, deviceid):
+    return self.deviceGetInfo(deviceid).model
+  
   def deviceGetInfo(self, deviceid):
     dev_info = self.cue.CorsairGetDeviceInfo(deviceid)
     if not bool(dev_info):  # False if `dev_info` is a NULL pointer
@@ -221,12 +224,11 @@ class Controller(object):
   
   def ledGetIds(self, deviceid):
     ledsinfo = self.ledGetInfo(deviceid)
-    deviceinfo = self.deviceGetInfo(deviceid)
-    print("Device ("+str(deviceinfo.model)+") Leds:")
+    model = self.deviceGetModel(deviceid)
+    print("Device ("+str(model)+") Leds:")
     
     for led in ledsinfo:
       print(led.ledId)
-    
   
   def ledGetInfo(self, deviceid=None):
     if not deviceid is None:
