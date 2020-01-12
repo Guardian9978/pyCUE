@@ -63,7 +63,7 @@ class CorsairProtocolDetails(namedtuple('CorsairProtocolDetails', _CorsairProtoc
                                                           details.serverProtocolVersion, details.breakingChanges)
 
 class Controller(object):
-  def __init__(self):
+  def __init__(self, priority=False):
     self.cue = CDLL("./CUESDK_2017.dll")
     self.cue.CorsairPerformProtocolHandshake.restype = _CorsairProtocolDetails
     
@@ -72,7 +72,10 @@ class Controller(object):
     
     self.protocol_details = self.perform_protocol_handshake()
     
-    self.cue.CorsairRequestControl(0)
+    self.cue.CorsairRequestControl(priority)
+  
+  def deviceGetCount(self):
+    return self.cue.CorsairGetDeviceCount()
   
   def flush(self):
     self.cue.CorsairSetLedsColorsFlushBuffer()
@@ -99,10 +102,13 @@ class Controller(object):
     
     return array
   
-  def ledOff(self, deviceid, ledid):
-    colors = [CorsairLedColor(ledid, 0, 0, 0)]
-    array = (CorsairLedColor * len(colors))(*colors)
-    self.updateLED(deviceid, array)
+  def ledGetCount(self, deviceid=None):
+    if not deviceid is None:
+      leds = self.cue.CorsairGetLedPositionsByDeviceIndex(deviceid)
+    else:
+      leds = self.cue.CorsairGetLedPositions()
+    
+    return leds
   
   def perform_protocol_handshake(self):
     """
