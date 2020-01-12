@@ -54,9 +54,9 @@ array = handle.ledGetColor(0, 200)
 r = array[0].r
 g = array[0].g
 b = array[0].b
-print("LED 200 on Device 0 Color: [" + str(r) + ", " + str(g) + ", " + str(b) + "]")
+print("LED ID 200 on Device 0 Color: [" + str(r) + ", " + str(g) + ", " + str(b) + "]")
 
 handle.ledSet(0, 200, [0, 0, 255])
 handle.flush()
-print("Set LED 200 on Device 0 to Blue")
+print("Set LED ID 200 on Device 0 to Blue")
 ```
