@@ -13,11 +13,12 @@ handle = Controller()
 #To get the amount of devices detected
 count = handle.deviceGetCount() #(Returns an Integer)
 
-#Get the device model Parameters(Device ID | Returns a String)
-model = handle.deviceGetModel(deviceid)
-
-#Get device led ids Parameters(DeviceID) Prints device Model and all Led Ids
-handle.ledGetIds(deviceid)
+#Get the device(s) model names(s)
+model = handle.deviceGetModels(deviceid) #Parameters(Device ID | Returns a string)
+models = handle.deviceGetModels() #(Returns a dictionary with keys being device ids and values being device model)
+  
+#Get device led ids Parameters(Device ID | Returns a list of Led IDs)
+leds = handle.ledGetIds(deviceid)
 
 #We can then get the led count
 count = handle.ledGetCount(deviceid) #(Paramaters taken Integer | Returns an Integer)
@@ -53,11 +54,17 @@ handle = Controller()
 count = handle.deviceGetCount()
 print("Devices Found: " + str(count))
 
-model = handle.deviceGetModel(deviceid)
-print("Device 0 Model: " + model)
+model = handle.deviceGetModels(deviceid)
+print("Device Model: " + model)
 
-#There is no return it just prints the information
-handle.ledGetIds(deviceid)
+models = handle.deviceGetModels()
+for deviceid in models:
+  model = models[deviceid]
+  print("Device " + str(deviceid) + " Model: " + model)
+
+leds = handle.ledGetIds(deviceid)
+for pos, ledid in enumerate(leds):
+  print("Led " + str(pos + 1) + ": " + str(ledid))
 
 count = handle.ledGetCount(0)
 print("Leds found on Device 0: " + str(count))
