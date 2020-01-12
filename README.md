@@ -52,28 +52,28 @@ from pyCUE_api.pyCUE_api import Controller
 handle = Controller()
 
 count = handle.deviceGetCount()
-print("Devices Found: " + str(count))
+print("Devices Found: %s" %(str(count)))
 
-model = handle.deviceGetModels(deviceid)
-print("Device Model: " + model)
+model = handle.deviceGetModels(0)
+print("Device 0 Model: %s" %(model))
 
 models = handle.deviceGetModels()
 for deviceid in models:
   model = models[deviceid]
-  print("Device " + str(deviceid) + " Model: " + model)
+  print("Device %s Model: %s" %(str(deviceid), model))
 
-leds = handle.ledGetIds(deviceid)
+leds = handle.ledGetIds(0)
 for pos, ledid in enumerate(leds):
-  print("Led " + str(pos + 1) + ": " + str(ledid))
+  print("Led %s: %s" %(str(pos + 1), str(ledid)))
 
 count = handle.ledGetCount(0)
-print("Leds found on Device 0: " + str(count))
+print("Leds found on Device 0: %s" %(str(count)))
 
 arrayobject = handle.ledGetColor(0, 200)
 r = arrayobject[0].r
 g = arrayobject[0].g
 b = arrayobject[0].b
-print("LED ID 200 on Device 0 Color: [" + str(r) + ", " + str(g) + ", " + str(b) + "]")
+print("LED ID 200 on Device 0 Color: [%s, %s, %s]" %(str(r), str(g), str(b)))
 
 handle.ledSet(0, 200, [0, 0, 255])
 handle.flush()
