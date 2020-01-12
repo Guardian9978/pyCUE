@@ -1,5 +1,6 @@
 from collections import namedtuple
-from ctypes import Structure, CDLL, c_int, c_bool, c_char_p, byref
+from ctypes import Structure, CDLL, c_double, c_int, c_bool, c_char_p, byref, POINTER
+from operator import attrgetter
 
 class CorsairLedColor(Structure):
     """
@@ -49,6 +50,68 @@ class _CorsairProtocolDetails(Structure):
         ("breakingChanges", c_bool)
     ]
 
+class _CorsairLedPosition(Structure):
+    """
+    Structure representing a LED position
+    """
+    __slots__ = [
+        "ledId",
+        "top",
+        "left",
+        "height",
+        "width"
+    ]
+
+    _fields_ = [
+        ("ledId", c_int),
+        ("top", c_double),
+        ("left", c_double),
+        ("height", c_double),
+        ("width", c_double)
+    ]
+
+
+class CorsairLedPosition(namedtuple('CorsairLedPosition', _CorsairLedPosition.__slots__)):
+
+    def __new__(cls, led):
+        """
+        Args:
+            led (_CorsairLedPosition): LED position structure
+        Returns:
+            CorsairLedPosition: LED position namedtuple
+        """
+        #return super(CorsairLedPosition, cls).__new__(cls, CLK(led.ledId), led.top, led.left, led.height, led.width)
+        return super(CorsairLedPosition, cls).__new__(cls, led.ledId, led.top, led.left, led.height, led.width)
+
+
+class _CorsairLedPositions(Structure):
+    """
+    Structure representing LED positions
+    """
+    __slots__ = [
+        "numberOfLed",
+        "pLedPosition"
+    ]
+
+    _fields_ = [
+        ("numberOfLed", c_int),
+        ("pLedPosition", POINTER(_CorsairLedPosition))
+    ]
+
+
+class CorsairLedPositions(namedtuple('CorsairLedPositions', _CorsairLedPositions.__slots__)):
+
+    def __new__(cls, leds):
+        """
+        Args:
+            leds (_CorsairLedPositions): Structure containing LED positions
+        Returns:
+            CorsairLedPositions: namedtuple containing LED positions
+        """
+        led_positions = tuple(sorted((CorsairLedPosition(leds.pLedPosition[x]) for x in range(leds.numberOfLed)),
+                                     key=attrgetter('ledId')))
+        return super(CorsairLedPositions, cls).__new__(cls, leds.numberOfLed, led_positions)
+
 class CorsairProtocolDetails(namedtuple('CorsairProtocolDetails', _CorsairProtocolDetails.__slots__)):
     def __new__(cls, details):
         """
@@ -69,6 +132,11 @@ class Controller(object):
     
     self.cue.CorsairRequestControl.restype = c_bool
     self.cue.CorsairRequestControl.argtypes = [c_int]
+    
+    self.cue.CorsairGetLedPositions.restype = POINTER(_CorsairLedPositions)
+        
+    self.cue.CorsairGetLedPositionsByDeviceIndex.restype = POINTER(_CorsairLedPositions)
+    self.cue.CorsairGetLedPositionsByDeviceIndex.argtypes = [c_int]
     
     self.protocol_details = self.perform_protocol_handshake()
     
