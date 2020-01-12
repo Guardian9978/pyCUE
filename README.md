@@ -50,10 +50,10 @@ print("Devices Found: " + str(count))
 count = handle.ledGetCount(0)
 print("Leds found on Device 0: " + str(count))
 
-array = handle.ledGetColor(0, 200)
-r = array[0].r
-g = array[0].g
-b = array[0].b
+arrayobject = handle.ledGetColor(0, 200)
+r = arrayobject[0].r
+g = arrayobject[0].g
+b = arrayobject[0].b
 print("LED ID 200 on Device 0 Color: [" + str(r) + ", " + str(g) + ", " + str(b) + "]")
 
 handle.ledSet(0, 200, [0, 0, 255])
