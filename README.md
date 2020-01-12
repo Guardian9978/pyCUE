@@ -23,14 +23,14 @@ red = array[0].r #red
 green = array[0].g #green
 blue = array[0].b #blue
 
-#Get the current LED color using a Device ID. (Paramaters taken int DeviceID, int list ledids | Returns an Array)
-array = handle.ledGetColor(deviceid, [200,201])
-led1_red = array[0].r   #LED 1 Red
-led1_green = array[0].g #LED 1 Green
-led1_blue = array[0].b  #LED 1 Blue
-led2_red = array[1].r   #LED 2 Red
-led2_green = array[1].g #LED 2 Green
-led2_blue = array[1].b  #LED 2 Blue
+#Get the current LED color using a Device ID. (Paramaters taken int DeviceID, int list ledids | Returns an Array of Objects)
+objectarray = handle.ledGetColor(deviceid, [200,201])
+led1_red = objectarray[0].r   #LED 1 Red
+led1_green = objectarray[0].g #LED 1 Green
+led1_blue = objectarray[0].b  #LED 1 Blue
+led2_red = objectarray[1].r   #LED 2 Red
+led2_green = objectarray[1].g #LED 2 Green
+led2_blue = objectarray[1].b  #LED 2 Blue
 
 #Set an led to a color
 #Paramaters taken int Device ID, int Led ID, List of Red, Green, and Blue, EXAMPLE: [Red, Green, Blue]
